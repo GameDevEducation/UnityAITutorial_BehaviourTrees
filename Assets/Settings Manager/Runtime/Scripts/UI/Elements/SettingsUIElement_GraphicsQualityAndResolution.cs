@@ -45,7 +45,8 @@ public class SettingsUIElement_GraphicsQualityAndResolution : BaseSettingsUIElem
         foreach(Resolution candidateResolution in Screen.resolutions)
         {
             Resolutions.Add(candidateResolution);
-            ResolutionOptions.Add(string.Format("{0} x {1} @ {2} Hz", candidateResolution.width, candidateResolution.height, candidateResolution.refreshRate));
+
+            ResolutionOptions.Add(string.Format("{0} x {1} @ {2} Hz", candidateResolution.width, candidateResolution.height, candidateResolution.refreshRateRatio.ToString()));
         }
         ResolutionSelector.ClearOptions();
         ResolutionSelector.AddOptions(ResolutionOptions);
@@ -63,7 +64,7 @@ public class SettingsUIElement_GraphicsQualityAndResolution : BaseSettingsUIElem
         // score is based on the relative difference between the proposed resolution and the current one
         score += Mathf.Abs((float)(toScore.width - current.width) / current.width);
         score += Mathf.Abs((float)(toScore.height - current.height) / current.height);
-        score += Mathf.Abs((float)(toScore.refreshRate - current.refreshRate) / current.refreshRate);
+        score += Mathf.Abs((float)(toScore.refreshRateRatio.value - current.refreshRateRatio.value) / (float)(current.refreshRateRatio.value));
 
         return score;
     }

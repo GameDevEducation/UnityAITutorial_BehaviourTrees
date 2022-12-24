@@ -147,7 +147,7 @@ public class PauseManager : MonoBehaviour
         if (Pause2DPhysics)
             Physics2D.simulationMode = SimulationMode2D.Script;
         if (Pause3DPhysics)
-            Physics.autoSimulation = false;
+            Physics.simulationMode = SimulationMode.Script;
         if (ChangeTimescale)
         {
             OldTimescale = Time.timeScale;
@@ -209,7 +209,7 @@ public class PauseManager : MonoBehaviour
         if (Pause2DPhysics)
             Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
         if (Pause3DPhysics)
-            Physics.autoSimulation = true;
+            Physics.simulationMode = SimulationMode.FixedUpdate;
         if (ChangeTimescale)
             Time.timeScale = OldTimescale;
 

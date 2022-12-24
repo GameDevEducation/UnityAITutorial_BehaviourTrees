@@ -47,12 +47,13 @@ public class Settings_Metadata
 [System.Serializable]
 public class GraphicsQualityAndResolution
 {
-    public int QualityLevel     = -1;
+    public int QualityLevel             = -1;
 
-    public int Width        = -1;
-    public int Height       = -1;
-    public int RefreshRate  = -1;
-    public bool FullScreen  = true;
+    public int Width                    = -1;
+    public int Height                   = -1;
+    public uint RefreshRate_Numerator   = 0;
+    public uint RefreshRate_Denominator = 0;
+    public bool FullScreen              = true;
 
     public GraphicsQualityAndResolution()
     {
@@ -61,11 +62,12 @@ public class GraphicsQualityAndResolution
 
     public GraphicsQualityAndResolution(Resolution _resolution, int _qualityLevel, bool _fullscreen)
     {
-        QualityLevel    = _qualityLevel;
-        Width           = _resolution.width;
-        Height          = _resolution.height;
-        RefreshRate     = _resolution.refreshRate;
-        FullScreen      = _fullscreen;
+        QualityLevel                = _qualityLevel;
+        Width                       = _resolution.width;
+        Height                      = _resolution.height;
+        RefreshRate_Numerator       = _resolution.refreshRateRatio.numerator;
+        RefreshRate_Denominator     = _resolution.refreshRateRatio.denominator;
+        FullScreen                  = _fullscreen;
     }    
 
     public void Validate()
@@ -73,20 +75,23 @@ public class GraphicsQualityAndResolution
         if (QualityLevel < 0)
             QualityLevel    = QualitySettings.names.Length - 1;
 
-        if (Width < 0 || Height < 0 || RefreshRate < 0)
+        if (Width < 0 || Height < 0 || 
+            RefreshRate_Numerator == 0 || RefreshRate_Denominator == 0)
         {
-            Width           = Screen.currentResolution.width;
-            Height          = Screen.currentResolution.height;
-            RefreshRate     = Screen.currentResolution.refreshRate;
-            FullScreen      = Screen.fullScreen;
+            Width                       = Screen.currentResolution.width;
+            Height                      = Screen.currentResolution.height;
+            RefreshRate_Numerator       = Screen.currentResolution.refreshRateRatio.numerator;
+            RefreshRate_Denominator     = Screen.currentResolution.refreshRateRatio.denominator;
+            FullScreen                  = Screen.fullScreen;
         }
     }
 
     public void SetResolution(Resolution _resolution)
     {
-        Width           = _resolution.width;
-        Height          = _resolution.height;
-        RefreshRate     = _resolution.refreshRate;
+        Width                   = _resolution.width;
+        Height                  = _resolution.height;
+        RefreshRate_Numerator   = _resolution.refreshRateRatio.numerator;
+        RefreshRate_Denominator = _resolution.refreshRateRatio.denominator;
     }
 
     public void SetQualityLevel(int _qualityLevel)
@@ -96,11 +101,12 @@ public class GraphicsQualityAndResolution
 
     public void UpdateFrom(GraphicsQualityAndResolution other)
     {
-        QualityLevel    = other.QualityLevel;
-        Width           = other.Width;
-        Height          = other.Height;
-        RefreshRate     = other.RefreshRate;
-        FullScreen      = other.FullScreen ;
+        QualityLevel            = other.QualityLevel;
+        Width                   = other.Width;
+        Height                  = other.Height;
+        RefreshRate_Numerator   = other.RefreshRate_Numerator;
+        RefreshRate_Denominator = other.RefreshRate_Denominator;
+        FullScreen              = other.FullScreen ;
     }
 }
 
@@ -125,7 +131,11 @@ public class Settings_Graphics
 
     public void ApplySettings()
     {
-        Screen.SetResolution(QualityAndResolution.Width, QualityAndResolution.Height, FullScreenMode.ExclusiveFullScreen, QualityAndResolution.RefreshRate);
+        RefreshRate refreshRate = new RefreshRate();
+        refreshRate.numerator = QualityAndResolution.RefreshRate_Numerator;
+        refreshRate.denominator = QualityAndResolution.RefreshRate_Denominator;
+
+        Screen.SetResolution(QualityAndResolution.Width, QualityAndResolution.Height, FullScreenMode.ExclusiveFullScreen, refreshRate);
 
         QualitySettings.SetQualityLevel(QualityAndResolution.QualityLevel);
     }
