@@ -9049,6 +9049,7 @@ Transform:
   - {fileID: 1585559488}
   - {fileID: 188280618}
   - {fileID: 311220801}
+  - {fileID: 1186033618}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -31519,6 +31520,50 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2784907891439519553, guid: 75521a25f23d0dd40b6cd893910dddab, type: 3}
   m_PrefabInstance: {fileID: 1182484319}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1186033617
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1186033618}
+  - component: {fileID: 1186033619}
+  m_Layer: 0
+  m_Name: Blackboard Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1186033618
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1186033617}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 285006933}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1186033619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1186033617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 489bf50b7914c79479c0c9816e450ab6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!43 &1200526603
 Mesh:
   m_ObjectHideFlags: 0
@@ -58290,6 +58335,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Wander_Range: 10
+  Chase_MinAwarenessToChase: 1.5
+  Chase_AwarenessToStopChase: 1
 --- !u!114 &4304133358129770677
 MonoBehaviour:
   m_ObjectHideFlags: 0

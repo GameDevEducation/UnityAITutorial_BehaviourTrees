@@ -1,18 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using UnityEditor.AppleTV;
 using UnityEngine;
 
-public class BTNodeBase
+public class BTNodeBase : BTElementBase
 {
-    public string Name { get; protected set; } = "-NO NAME-";
-
-    protected List<BTNodeBase> Children = new List<BTNodeBase>();
+    protected List<BTNodeBase> Children = new();
+    protected List<BTDecoratorBase> Decorators = new();
+    protected List<BTServiceBase> Services = new();
 
     protected System.Func<BehaviourTree.ENodeStatus> OnEnterFn;
     protected System.Func<BehaviourTree.ENodeStatus> OnTickFn;
 
     public BehaviourTree.ENodeStatus LastStatus { get; protected set; } = BehaviourTree.ENodeStatus.Unknown;
+    public bool DecoratorsPermitRunning { get; protected set; } = true;
 
     public BTNodeBase(string _Name = "",
         System.Func<BehaviourTree.ENodeStatus> _OnEnterFn = null,
@@ -42,6 +44,40 @@ public class BTNodeBase
         return newNode;
     }
 
+    public BTNodeBase AddService<T>(string _Name, System.Action<float> _OnTickFn) where T : BTServiceBase, new()
+    {
+        T newService = new T();
+        newService.Initialise(_Name, _OnTickFn);
+
+        Services.Add(newService);
+
+        return this;
+    }
+
+    public BTNodeBase AddService<T>(T newService) where T : BTServiceBase
+    {
+        Services.Add(newService);
+
+        return this;
+    }
+
+    public BTNodeBase AddDecorator<T>(string _Name, System.Func<bool> _OnEvaluateFn) where T : BTDecoratorBase, new()
+    {
+        T newDecorator = new T();
+        newDecorator.Initialise(_Name, _OnEvaluateFn);
+
+        Decorators.Add(newDecorator);
+
+        return this;
+    }
+
+    public BTNodeBase AddDecorator<T>(T newDecorator) where T : BTDecoratorBase
+    {
+        Decorators.Add(newDecorator);
+
+        return this;
+    }
+
     public virtual void Reset()
     {
         LastStatus = BehaviourTree.ENodeStatus.Unknown;
@@ -67,15 +103,62 @@ public class BTNodeBase
             LastStatus = Children.Count > 0 ? BehaviourTree.ENodeStatus.InProgress : BehaviourTree.ENodeStatus.Succeeded;
     }
 
+    void TickServices(float deltaTime)
+    {
+        foreach(var service in Services)
+            service.OnTick(deltaTime);
+    }
+
+    bool EvaluateDecorators()
+    {
+        bool canRun = true;
+
+        foreach(var decorator in Decorators)
+        {
+            canRun = decorator.Evaluate();
+
+            if (!canRun) 
+                break;
+        }
+
+        if (canRun != DecoratorsPermitRunning)
+        {
+            DecoratorsPermitRunning = canRun;
+
+            // newly able to run?
+            if (canRun)
+                Reset();
+        }
+
+        return canRun;
+    }
+
+    protected virtual void OnAbort()
+    {
+        Reset();
+    }
+
     protected virtual bool OnTick(float deltaTime) 
     {
         bool tickedAnyNodes = false;
+
+        if (!DecoratorsPermitRunning) 
+        {
+            LastStatus = BehaviourTree.ENodeStatus.Failed;
+            tickedAnyNodes = true;
+            return tickedAnyNodes;
+        }
+
+        TickServices(deltaTime);
 
         // are we entering this node for the first time?
         if (LastStatus == BehaviourTree.ENodeStatus.Unknown)
         {
             OnEnter();
             tickedAnyNodes = true;
+
+            if (LastStatus == BehaviourTree.ENodeStatus.Failed)
+                return tickedAnyNodes;
         }
 
         // is there a tick function defined?
@@ -99,8 +182,13 @@ public class BTNodeBase
         }
 
         // run the tick on any children
-        foreach(var child in Children) 
-        { 
+        for (int childIndex = 0; childIndex < Children.Count; ++childIndex) 
+        {
+            var child = Children[childIndex];
+
+            bool childPreviouslyEnabledByDecorators = child.DecoratorsPermitRunning;
+            bool childCurrentlyEnabledByDecorators = child.EvaluateDecorators();
+
             // if the child is in progress then early out after ticking
             if (child.LastStatus == BehaviourTree.ENodeStatus.InProgress)
             {
@@ -116,6 +204,18 @@ public class BTNodeBase
 
             // inherit the child's status by default
             LastStatus = child.LastStatus;
+
+            if (!childPreviouslyEnabledByDecorators && childCurrentlyEnabledByDecorators)
+            {
+                for (int futureIndex = childIndex + 1; futureIndex < Children.Count; ++futureIndex) 
+                { 
+                    var futureChild = Children[futureIndex];
+                    if (futureChild.LastStatus == BehaviourTree.ENodeStatus.InProgress)
+                        futureChild.OnAbort();
+                    else
+                        futureChild.Reset();
+                }
+            }
 
             if (child.LastStatus == BehaviourTree.ENodeStatus.InProgress)
                 return tickedAnyNodes;
@@ -151,16 +251,7 @@ public class BTNodeBase
 
     }
 
-    public string GetDebugText()
-    {
-        StringBuilder debugTextBuilder = new StringBuilder();
-
-        GetDebugTextInternal(debugTextBuilder);
-
-        return debugTextBuilder.ToString();
-    }
-
-    protected virtual void GetDebugTextInternal(StringBuilder debugTextBuilder, int indentLevel = 0)
+    protected override void GetDebugTextInternal(StringBuilder debugTextBuilder, int indentLevel = 0)
     {
         // apply the indent
         for (int index = 0; index < indentLevel; ++index)
@@ -168,10 +259,22 @@ public class BTNodeBase
 
         debugTextBuilder.Append($"{Name} [{LastStatus.ToString()}]");
 
-        foreach(var child in Children)
+        foreach (var service in Services)
         {
             debugTextBuilder.AppendLine();
-            child.GetDebugTextInternal(debugTextBuilder, indentLevel + 1);
+            debugTextBuilder.Append(service.GetDebugText(indentLevel + 1));
+        }
+
+        foreach (var decorator in Decorators)
+        {
+            debugTextBuilder.AppendLine();
+            debugTextBuilder.Append(decorator.GetDebugText(indentLevel + 1));
+        }
+
+        foreach (var child in Children)
+        {
+            debugTextBuilder.AppendLine();
+            child.GetDebugTextInternal(debugTextBuilder, indentLevel + 2);
         }
     }
 }

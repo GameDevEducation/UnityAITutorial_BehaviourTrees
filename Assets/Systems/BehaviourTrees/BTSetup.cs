@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -6,6 +7,39 @@ using UnityEngine;
 [RequireComponent(typeof(BehaviourTree))]
 public class BTSetup : MonoBehaviour
 {
+    public class BlackboardKey : BlackboardKeyBase, IEquatable<BlackboardKey>
+    {
+        public static readonly BlackboardKey CurrentTarget = new BlackboardKey() { Name = "CurrentTarget" };
+
+        public string Name;
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as BlackboardKey);
+        }
+
+        public bool Equals(BlackboardKey other)
+        {
+            return other is not null &&
+                   Name == other.Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name);
+        }
+
+        public static bool operator ==(BlackboardKey left, BlackboardKey right)
+        {
+            return EqualityComparer<BlackboardKey>.Default.Equals(left, right);
+        }
+
+        public static bool operator !=(BlackboardKey left, BlackboardKey right)
+        {
+            return !(left == right);
+        }
+    }
+
     [Header("Wander Settings")]
     [SerializeField] float Wander_Range = 10f;
 
@@ -13,67 +47,85 @@ public class BTSetup : MonoBehaviour
     [SerializeField] float Chase_MinAwarenessToChase = 1.5f;
     [SerializeField] float Chase_AwarenessToStopChase = 1f;
 
-    DetectableTarget Chase_CurrentTarget;
-
     protected BehaviourTree LinkedBT;
     protected CharacterAgent Agent;
     protected AwarenessSystem Sensors;
+    protected Blackboard<BlackboardKey> LocalMemory;
 
     void Awake()
     {
         Agent = GetComponent<CharacterAgent>();
         LinkedBT = GetComponent<BehaviourTree>();
         Sensors = GetComponent<AwarenessSystem>();
+    }
+
+    void Start()
+    {
+        LocalMemory = BlackboardManager.Instance.GetIndividualBlackboard<BlackboardKey>(this);
+        LocalMemory.SetGeneric<DetectableTarget>(BlackboardKey.CurrentTarget, null);
 
         var BTRoot = LinkedBT.RootNode.Add<BTNode_Selector>("Base Logic");
-
-        var chaseRoot = BTRoot.Add(new BTNode_Condition("Can Chase",
-            () =>
+        BTRoot.AddService<BTServiceBase>("Search for target", (float deltaTime) =>
+        {
+            // no targets
+            if (Sensors.ActiveTargets == null || Sensors.ActiveTargets.Count == 0)
             {
-                // no targets
-                if (Sensors.ActiveTargets == null || Sensors.ActiveTargets.Count == 0)
-                    return false;
+                LocalMemory.SetGeneric<DetectableTarget>(BlackboardKey.CurrentTarget, null);
+                return;
+            }
 
-                if (Chase_CurrentTarget != null)
-                {
-                    // check if the current is still sensed
-                    foreach (var candidate in Sensors.ActiveTargets.Values)
-                    {
-                        if (candidate.Detectable == Chase_CurrentTarget &&
-                            candidate.Awareness >= Chase_AwarenessToStopChase)
-                        {
-                            return true;
-                        }
-                    }
+            var currentTarget = LocalMemory.GetGeneric<DetectableTarget>(BlackboardKey.CurrentTarget);
 
-                    // clear our current target
-                    Chase_CurrentTarget = null;
-                }
-
-                // acquire a new target if possible
-                float highestAwareness = Chase_MinAwarenessToChase;
+            if (currentTarget != null)
+            {
+                // check if the current is still sensed
                 foreach (var candidate in Sensors.ActiveTargets.Values)
                 {
-                    // found a target to acquire
-                    if (candidate.Awareness >= highestAwareness)
+                    if (candidate.Detectable == currentTarget &&
+                        candidate.Awareness >= Chase_AwarenessToStopChase)
                     {
-                        Chase_CurrentTarget = candidate.Detectable;
-                        highestAwareness = candidate.Awareness;
+                        return;
                     }
                 }
 
-                return Chase_CurrentTarget != null;
-            }));
+                // clear our current target
+                currentTarget = null;
+            }
+
+            // acquire a new target if possible
+            float highestAwareness = Chase_MinAwarenessToChase;
+            foreach (var candidate in Sensors.ActiveTargets.Values)
+            {
+                // found a target to acquire
+                if (candidate.Awareness >= highestAwareness)
+                {
+                    currentTarget = candidate.Detectable;
+                    highestAwareness = candidate.Awareness;
+                }
+            }
+
+            LocalMemory.SetGeneric(BlackboardKey.CurrentTarget, currentTarget);
+        });
+
+        var chaseRoot = BTRoot.Add<BTNode_Sequence>("Can Logic");
+        chaseRoot.AddDecorator<BTDecoratorBase>("Can Chase?", () =>
+        {
+            var currentTarget = LocalMemory.GetGeneric<DetectableTarget>(BlackboardKey.CurrentTarget);
+            return currentTarget != null;
+        });
+
         chaseRoot.Add<BTNode_Action>("Chase Target",
             () =>
             {
-                Agent.MoveTo(Chase_CurrentTarget.transform.position);
+                var currentTarget = LocalMemory.GetGeneric<DetectableTarget>(BlackboardKey.CurrentTarget);
+                Agent.MoveTo(currentTarget.transform.position);
 
                 return BehaviourTree.ENodeStatus.InProgress;
             },
             () =>
             {
-                Agent.MoveTo(Chase_CurrentTarget.transform.position);
+                var currentTarget = LocalMemory.GetGeneric<DetectableTarget>(BlackboardKey.CurrentTarget);
+                Agent.MoveTo(currentTarget.transform.position);
 
                 return BehaviourTree.ENodeStatus.InProgress;
             });
