@@ -1,15 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using System.Collections.Generic;
 using TMPro;
+using UnityEngine;
 
 public class SettingsUIElement_GraphicsQualityAndResolution : BaseSettingsUIElement
 {
-    #pragma warning disable 0649
+#pragma warning disable 0649
     [SerializeField] TMP_Dropdown ResolutionSelector;
     [SerializeField] TMP_Dropdown QualitySelector;
-    #pragma warning restore 0649
+#pragma warning restore 0649
 
     private List<string> QualityOptions;
 
@@ -42,7 +40,7 @@ public class SettingsUIElement_GraphicsQualityAndResolution : BaseSettingsUIElem
         QualitySelector.AddOptions(QualityOptions);
 
         // build up the list of resolutions
-        foreach(Resolution candidateResolution in Screen.resolutions)
+        foreach (Resolution candidateResolution in Screen.resolutions)
         {
             Resolutions.Add(candidateResolution);
 
@@ -54,7 +52,7 @@ public class SettingsUIElement_GraphicsQualityAndResolution : BaseSettingsUIElem
 
     public override void PopulateInitialValue()
     {
-        
+
     }
 
     float ScoreResolution(Resolution toScore, Resolution current)
@@ -72,14 +70,14 @@ public class SettingsUIElement_GraphicsQualityAndResolution : BaseSettingsUIElem
     public override void SynchroniseUIWithSettings()
     {
         GraphicsQualityAndResolution currentSettings = SettingsBinder.GetGraphicsQualityAndResolution(UniqueID, SettingsManager.Settings);
-        
+
         InitialQualityLevel = currentSettings.QualityLevel;
         QualitySelector.SetValueWithoutNotify(InitialQualityLevel);
 
         // find a matching resolution
         int bestResolution = -1;
         float bestScore = float.MaxValue;
-        for(int index = 0; index < Resolutions.Count; ++index)
+        for (int index = 0; index < Resolutions.Count; ++index)
         {
             float score = ScoreResolution(Resolutions[index], Screen.currentResolution);
 

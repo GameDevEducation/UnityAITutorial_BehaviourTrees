@@ -1,16 +1,15 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Blackboard<BlackboardKeyType>
 {
-    Dictionary<BlackboardKeyType, int>         IntValues           = new();
-    Dictionary<BlackboardKeyType, float>       FloatValues         = new();
-    Dictionary<BlackboardKeyType, bool>        BoolValues          = new();
-    Dictionary<BlackboardKeyType, string>      StringValues        = new();
-    Dictionary<BlackboardKeyType, Vector3>     Vector3Values       = new();
-    Dictionary<BlackboardKeyType, GameObject>  GameObjectValues    = new();
-    Dictionary<BlackboardKeyType, object>      GenericValues       = new();
+    Dictionary<BlackboardKeyType, int> IntValues = new();
+    Dictionary<BlackboardKeyType, float> FloatValues = new();
+    Dictionary<BlackboardKeyType, bool> BoolValues = new();
+    Dictionary<BlackboardKeyType, string> StringValues = new();
+    Dictionary<BlackboardKeyType, Vector3> Vector3Values = new();
+    Dictionary<BlackboardKeyType, GameObject> GameObjectValues = new();
+    Dictionary<BlackboardKeyType, object> GenericValues = new();
 
     public void SetGeneric<T>(BlackboardKeyType key, T value)
     {
@@ -31,7 +30,7 @@ public class Blackboard<BlackboardKeyType>
         object localValue;
         if (GenericValues.TryGetValue(key, out localValue))
         {
-            value= (T)localValue;
+            value = (T)localValue;
             return true;
         }
 

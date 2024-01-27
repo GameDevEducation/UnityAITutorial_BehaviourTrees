@@ -1,15 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class SettingsUIElement_Boolean : BaseSettingsUIElement
 {
-    #pragma warning disable 0649
+#pragma warning disable 0649
     [SerializeField] Toggle ToggleBox;
     [SerializeField] bool DefaultValue;
-    #pragma warning restore 0649
+#pragma warning restore 0649
 
     private bool InitialValue = false;
 

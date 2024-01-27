@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class Action_Chase : Action_Base
 {
@@ -21,7 +19,7 @@ public class Action_Chase : Action_Base
     public override void OnActivated(Goal_Base _linkedGoal)
     {
         base.OnActivated(_linkedGoal);
-        
+
         // cache the chase goal
         ChaseGoal = (Goal_Chase)LinkedGoal;
 
@@ -31,12 +29,12 @@ public class Action_Chase : Action_Base
     public override void OnDeactivated()
     {
         base.OnDeactivated();
-        
+
         ChaseGoal = null;
     }
 
     public override void OnTick()
     {
         Agent.MoveTo(ChaseGoal.MoveTarget);
-    }    
+    }
 }

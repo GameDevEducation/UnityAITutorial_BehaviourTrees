@@ -1,17 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Unity.Cinemachine;
 using UnityEngine;
-using Cinemachine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 [System.Serializable]
-public class ControlSchemeChanged : UnityEvent<PlayerInput> {}
+public class ControlSchemeChanged : UnityEvent<PlayerInput> { }
 
 [RequireComponent(typeof(Rigidbody))]
 public class CharacterMotor : MonoBehaviour, IPausable
 {
-    #pragma warning disable 0649
+#pragma warning disable 0649
     [Header("Configuration")]
     [SerializeField] CharacterMotorConfig Config;
 
@@ -27,7 +25,7 @@ public class CharacterMotor : MonoBehaviour, IPausable
 
     [Header("Debugging")]
     [SerializeField] bool DEBUG_ShowStepRays = false;
-    #pragma warning restore 0649
+#pragma warning restore 0649
 
     protected bool IsRunning = false;
     protected bool IsGrounded = true;
@@ -44,7 +42,7 @@ public class CharacterMotor : MonoBehaviour, IPausable
 
     protected Rigidbody CharacterRB;
     protected Collider CharacterCollider;
-    protected CinemachineVirtualCamera Camera;
+    protected CinemachineCamera Camera;
     protected float CameraPitch = 0f;
 
     protected bool IsCameraLocked
@@ -62,10 +60,10 @@ public class CharacterMotor : MonoBehaviour, IPausable
     protected virtual void Start()
     {
         PauseManager.Instance.RegisterPausable(this);
-        
+
         CharacterRB = GetComponent<Rigidbody>();
         CharacterCollider = GetComponent<Collider>();
-        Camera = GetComponentInChildren<CinemachineVirtualCamera>();
+        Camera = GetComponentInChildren<CinemachineCamera>();
 
         OriginalDrag = CharacterRB.drag;
         CharacterCollider.material = Config.DefaultMaterial;
@@ -78,13 +76,13 @@ public class CharacterMotor : MonoBehaviour, IPausable
     public void OnMove(InputValue value)
     {
         _Internal_MovementInput = value.Get<Vector2>();
-    }    
+    }
 
     protected Vector2 _Internal_LookInput;
     public void OnLook(InputValue value)
     {
         _Internal_LookInput = value.Get<Vector2>();
-    }  
+    }
 
     protected bool _Internal_JumpInput;
     public void OnJump(InputValue value)
@@ -112,8 +110,8 @@ public class CharacterMotor : MonoBehaviour, IPausable
 
     #region Camera Handling
     protected virtual Vector2 GetCameraInput()
-    {        
-        return new Vector2(_Internal_LookInput.x * SettingsManager.Settings.Camera.Sensitivity_X, 
+    {
+        return new Vector2(_Internal_LookInput.x * SettingsManager.Settings.Camera.Sensitivity_X,
                            _Internal_LookInput.y * SettingsManager.Settings.Camera.Sensitivity_Y * (SettingsManager.Settings.Camera.Invert_YAxis ? 1f : -1f));
     }
 
@@ -158,7 +156,7 @@ public class CharacterMotor : MonoBehaviour, IPausable
     protected virtual RaycastHit UpdateIsGrounded()
     {
         // raycast to check where the ground is
-        RaycastHit hitResult;     
+        RaycastHit hitResult;
         float groundCheckDistance = Config.GroundedThreshold + (Config.CharacterHeight * 0.5f) - Config.CharacterRadius;
         float workingRadius = Config.CharacterRadius * (1f - Config.CollisionBuffer);
         if (Physics.SphereCast(transform.position, workingRadius, Vector3.down, out hitResult, groundCheckDistance, Config.WalkableMask, QueryTriggerInteraction.Ignore))
@@ -189,8 +187,8 @@ public class CharacterMotor : MonoBehaviour, IPausable
         Vector2 movementInput = GetMovementInput();
 
         // calculat the potential movement vector (handles grounded, not grounded and air control on or off)
-        Vector3 movementVector = transform.forward * movementInput.y * CurrentSpeed + 
-                                 transform.right   * movementInput.x * CurrentSpeed;
+        Vector3 movementVector = transform.forward * movementInput.y * CurrentSpeed +
+                                 transform.right * movementInput.x * CurrentSpeed;
         float originalMagnitude = movementVector.magnitude;
 
         // if we're grounded then determine how far we move
@@ -291,24 +289,24 @@ public class CharacterMotor : MonoBehaviour, IPausable
                 Vector3 stepCheckStart = transform.position - Vector3.up * (Config.CharacterHeight * 0.5f) + (Vector3.up * 0.05f);
                 Vector3 stepCheckDirection = movementVector.normalized;
 
-                #if UNITY_EDITOR
+#if UNITY_EDITOR
                 Vector3 DBG_StepStage1StartLoc = stepCheckStart;
                 bool DBG_StepStage1Hit = false;
                 bool DBG_StepStage2Hit = false;
-                #endif // UNITY_EDITOR
+#endif // UNITY_EDITOR
 
                 // first step is to check that there is a blocker
                 if (Physics.Raycast(stepCheckStart, stepCheckDirection, Config.StepCheckLookAhead, Config.WalkableMask, QueryTriggerInteraction.Ignore))
                 {
                     stepCheckStart += Vector3.up * Config.MaxStepUpDistance;
 
-                    #if UNITY_EDITOR
+#if UNITY_EDITOR
                     DBG_StepStage1Hit = true;
-                    #endif // UNITY_EDITOR
+#endif // UNITY_EDITOR
 
                     // now we check if the blocker is clear at the step height
                     if (!Physics.Raycast(stepCheckStart, stepCheckDirection, Config.StepCheckLookAhead, Config.WalkableMask, QueryTriggerInteraction.Ignore))
-                    {                     
+                    {
                         Vector3 candidatePoint = stepCheckStart + (stepCheckDirection * Config.StepCheckLookAhead);
 
                         // make sure we hit the ground
@@ -320,23 +318,23 @@ public class CharacterMotor : MonoBehaviour, IPausable
                             {
                                 transform.position = stepCheckHitResult.point + Vector3.up * Config.CharacterHeight * 0.5f;
                             }
-                            #if UNITY_EDITOR
+#if UNITY_EDITOR
                             else
                                 DBG_StepStage2Hit = true;
-                            #endif // UNITY_EDITOR  
+#endif // UNITY_EDITOR  
                         }
-                        #if UNITY_EDITOR
+#if UNITY_EDITOR
                         else
                             DBG_StepStage2Hit = true;
-                        #endif // UNITY_EDITOR   
+#endif // UNITY_EDITOR   
                     }
-                    #if UNITY_EDITOR
+#if UNITY_EDITOR
                     else
                         DBG_StepStage2Hit = true;
-                    #endif // UNITY_EDITOR                   
+#endif // UNITY_EDITOR                   
                 }
 
-                #if UNITY_EDITOR
+#if UNITY_EDITOR
                 if (DEBUG_ShowStepRays)
                 {
                     if (DBG_StepStage1Hit)
@@ -344,7 +342,7 @@ public class CharacterMotor : MonoBehaviour, IPausable
                     else
                         Debug.DrawLine(DBG_StepStage1StartLoc, DBG_StepStage1StartLoc + stepCheckDirection * Config.StepCheckLookAhead, DBG_StepStage1Hit ? Color.blue : Color.yellow, 0f);
                 }
-                #endif // UNITY_EDITOR
+#endif // UNITY_EDITOR
 
                 // back on the ground - reset drag, physics material and jump count
                 CharacterRB.drag = OriginalDrag;
@@ -359,7 +357,7 @@ public class CharacterMotor : MonoBehaviour, IPausable
     {
         get
         {
-            return IsGrounded ? (IsRunning ? Config.RunSpeed : Config.WalkSpeed) : 
+            return IsGrounded ? (IsRunning ? Config.RunSpeed : Config.WalkSpeed) :
                                 (Config.AirControl ? Config.InAirSpeed : 0);
         }
     }
@@ -411,7 +409,7 @@ public class CharacterMotor : MonoBehaviour, IPausable
     #endregion
 
     #region IPausable
-    public bool OnPauseRequested()  { return true; }
+    public bool OnPauseRequested() { return true; }
     public bool OnResumeRequested() { return true; }
 
     public void OnPause() { }

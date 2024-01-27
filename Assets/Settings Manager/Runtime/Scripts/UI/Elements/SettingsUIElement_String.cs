@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
+using UnityEngine;
 
 public class SettingsUIElement_String : BaseSettingsUIElement
 {
@@ -47,4 +44,3 @@ public class SettingsUIElement_String : BaseSettingsUIElement
         SettingsBinder.SetString(UniqueID, newValue, SettingsManager.Settings);
     }
 }
- 

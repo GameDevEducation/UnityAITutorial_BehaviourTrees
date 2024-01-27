@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -15,7 +14,7 @@ public class PauseManager : MonoBehaviour
         FindAllComponents
     }
 
-    #pragma warning disable 0649
+#pragma warning disable 0649
     [Header("Mode")]
     [SerializeField] PauseMode Mode = PauseMode.FindActiveComponents;
 
@@ -27,7 +26,7 @@ public class PauseManager : MonoBehaviour
 
     [SerializeField] UnityEvent OnPause;
     [SerializeField] UnityEvent OnResume;
-    #pragma warning restore 0649
+#pragma warning restore 0649
 
     private bool IsPaused_Internal = false;
     private List<IPausable> PausableComponents = null;
@@ -64,13 +63,13 @@ public class PauseManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public bool RequestPause()
@@ -95,7 +94,7 @@ public class PauseManager : MonoBehaviour
                 GameObject[] rootObjects = activeScene.GetRootGameObjects();
 
                 // get the list of interfaces
-                foreach(GameObject rootObject in rootObjects)
+                foreach (GameObject rootObject in rootObjects)
                 {
                     PausableComponents.AddRange(rootObject.GetComponentsInChildren<IPausable>(includeInactive));
                 }
@@ -108,7 +107,7 @@ public class PauseManager : MonoBehaviour
         if (PausableComponents != null)
         {
             // give each component the option to inhibit pausing
-            foreach(IPausable pausable in PausableComponents)
+            foreach (IPausable pausable in PausableComponents)
             {
                 if (!pausable.OnPauseRequested())
                 {
@@ -134,7 +133,7 @@ public class PauseManager : MonoBehaviour
         if (PausableComponents != null)
         {
             // notify of pausing
-            foreach(IPausable pausable in PausableComponents)
+            foreach (IPausable pausable in PausableComponents)
             {
                 pausable.OnPause();
             }
@@ -170,7 +169,7 @@ public class PauseManager : MonoBehaviour
         if (PausableComponents != null)
         {
             // give each component the option to inhibit resuming
-            foreach(IPausable pausable in PausableComponents)
+            foreach (IPausable pausable in PausableComponents)
             {
                 if (!pausable.OnPauseRequested())
                 {
@@ -196,7 +195,7 @@ public class PauseManager : MonoBehaviour
         if (PausableComponents != null)
         {
             // notify of resuming
-            foreach(IPausable pausable in PausableComponents)
+            foreach (IPausable pausable in PausableComponents)
             {
                 pausable.OnResume();
             }

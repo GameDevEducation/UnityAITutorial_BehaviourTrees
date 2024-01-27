@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Goal_Wander : Goal_Base
@@ -21,7 +19,7 @@ public class Goal_Wander : Goal_Base
     public override void OnGoalActivated(Action_Base _linkedAction)
     {
         base.OnGoalActivated(_linkedAction);
-        
+
         CurrentPriority = WanderPriority;
     }
 

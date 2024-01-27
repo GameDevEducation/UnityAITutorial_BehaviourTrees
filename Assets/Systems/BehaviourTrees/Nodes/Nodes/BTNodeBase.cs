@@ -1,8 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using UnityEditor.AppleTV;
-using UnityEngine;
 
 public class BTNodeBase : BTElementBase
 {
@@ -82,7 +79,7 @@ public class BTNodeBase : BTElementBase
     {
         LastStatus = BehaviourTree.ENodeStatus.Unknown;
 
-        foreach(var child in Children)
+        foreach (var child in Children)
             child.Reset();
     }
 
@@ -105,7 +102,7 @@ public class BTNodeBase : BTElementBase
 
     void TickServices(float deltaTime)
     {
-        foreach(var service in Services)
+        foreach (var service in Services)
             service.OnTick(deltaTime);
     }
 
@@ -113,11 +110,11 @@ public class BTNodeBase : BTElementBase
     {
         bool canRun = true;
 
-        foreach(var decorator in Decorators)
+        foreach (var decorator in Decorators)
         {
             canRun = decorator.Evaluate();
 
-            if (!canRun) 
+            if (!canRun)
                 break;
         }
 
@@ -138,11 +135,11 @@ public class BTNodeBase : BTElementBase
         Reset();
     }
 
-    protected virtual bool OnTick(float deltaTime) 
+    protected virtual bool OnTick(float deltaTime)
     {
         bool tickedAnyNodes = false;
 
-        if (!DecoratorsPermitRunning) 
+        if (!DecoratorsPermitRunning)
         {
             LastStatus = BehaviourTree.ENodeStatus.Failed;
             tickedAnyNodes = true;
@@ -182,7 +179,7 @@ public class BTNodeBase : BTElementBase
         }
 
         // run the tick on any children
-        for (int childIndex = 0; childIndex < Children.Count; ++childIndex) 
+        for (int childIndex = 0; childIndex < Children.Count; ++childIndex)
         {
             var child = Children[childIndex];
 
@@ -207,8 +204,8 @@ public class BTNodeBase : BTElementBase
 
             if (!childPreviouslyEnabledByDecorators && childCurrentlyEnabledByDecorators)
             {
-                for (int futureIndex = childIndex + 1; futureIndex < Children.Count; ++futureIndex) 
-                { 
+                for (int futureIndex = childIndex + 1; futureIndex < Children.Count; ++futureIndex)
+                {
                     var futureChild = Children[futureIndex];
                     if (futureChild.LastStatus == BehaviourTree.ENodeStatus.InProgress)
                         futureChild.OnAbort();

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
@@ -11,7 +9,7 @@ using UnityEditor;
 public class EnemyAI : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI FeedbackDisplay;
-    
+
     [SerializeField] float _VisionConeAngle = 60f;
     [SerializeField] float _VisionConeRange = 30f;
     [SerializeField] Color _VisionConeColour = new Color(1f, 0f, 0f, 0.25f);
@@ -48,13 +46,13 @@ public class EnemyAI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void ReportCanSee(DetectableTarget seen)
@@ -125,7 +123,7 @@ public class EnemyAIEditor : Editor
 
         // draw the vision cone
         Handles.color = ai.VisionConeColour;
-        Handles.DrawSolidArc(ai.transform.position, Vector3.up, startPoint, ai.VisionConeAngle * 2f, ai.VisionConeRange);        
+        Handles.DrawSolidArc(ai.transform.position, Vector3.up, startPoint, ai.VisionConeAngle * 2f, ai.VisionConeRange);
     }
 }
 #endif // UNITY_EDITOR

@@ -1,15 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class SettingsUIElement_Integer : BaseSettingsUIElement
 {
-    #pragma warning disable 0649
+#pragma warning disable 0649
     [SerializeField] Slider ValueSlider;
     [SerializeField] int DefaultValue;
-    #pragma warning restore 0649
+#pragma warning restore 0649
 
     private int InitialValue = int.MaxValue;
 

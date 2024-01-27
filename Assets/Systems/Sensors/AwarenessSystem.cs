@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,11 +17,11 @@ public class TrackedTarget
         var oldAwareness = Awareness;
 
         if (target != null)
-            Detectable      = target;
-        RawPosition     = position;
-        LastSensedTime  = Time.time;
-        Awareness       = Mathf.Clamp(Mathf.Max(Awareness, minAwareness) + awareness, 0f, 2f);
-        
+            Detectable = target;
+        RawPosition = position;
+        LastSensedTime = Time.time;
+        Awareness = Mathf.Clamp(Mathf.Max(Awareness, minAwareness) + awareness, 0f, 2f);
+
         if (oldAwareness < 2f && Awareness >= 2f)
             return true;
         if (oldAwareness < 1f && Awareness >= 1f)
@@ -82,7 +81,7 @@ public class AwarenessSystem : MonoBehaviour
     void Update()
     {
         List<GameObject> toCleanup = new List<GameObject>();
-        foreach(var targetGO in Targets.Keys)
+        foreach (var targetGO in Targets.Keys)
         {
             if (Targets[targetGO].DecayAwareness(AwarenessDecayDelay, AwarenessDecayRate * Time.deltaTime))
             {
@@ -102,7 +101,7 @@ public class AwarenessSystem : MonoBehaviour
         }
 
         // cleanup targets that are no longer detected
-        foreach(var target in toCleanup)
+        foreach (var target in toCleanup)
             Targets.Remove(target);
     }
 
@@ -148,5 +147,5 @@ public class AwarenessSystem : MonoBehaviour
         var awareness = ProximityAwarenessBuildRate * Time.deltaTime;
 
         UpdateAwareness(target.gameObject, target, target.transform.position, awareness, ProximityMinimumAwareness);
-    }    
+    }
 }

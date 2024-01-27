@@ -1,15 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class SettingsUIElement_Float : BaseSettingsUIElement
 {
-    #pragma warning disable 0649
+#pragma warning disable 0649
     [SerializeField] Slider ValueSlider;
     [SerializeField] float DefaultValue;
-    #pragma warning restore 0649
+#pragma warning restore 0649
 
     private float InitialValue = float.MaxValue;
 
@@ -22,7 +19,7 @@ public class SettingsUIElement_Float : BaseSettingsUIElement
         ValueSlider.minValue = typeSpecificConfig.MinValue;
         ValueSlider.maxValue = typeSpecificConfig.MaxValue;
         DefaultValue = typeSpecificConfig.DefaultValue;
-        ValueSlider.SetValueWithoutNotify(typeSpecificConfig.DefaultValue);        
+        ValueSlider.SetValueWithoutNotify(typeSpecificConfig.DefaultValue);
     }
 #endif // UNITY_EDITOR
 
@@ -54,5 +51,5 @@ public class SettingsUIElement_Float : BaseSettingsUIElement
         SettingsBinder.SetFloat(UniqueID, newValue, SettingsManager.Settings);
 
         Name.text = SettingName + " [" + newValue.ToString("0.00") + "]";
-    }    
+    }
 }

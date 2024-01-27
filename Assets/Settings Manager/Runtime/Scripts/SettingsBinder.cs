@@ -12,7 +12,7 @@ static public class SettingsBinder
 {
     public static string GetString(SettingUID uniqueID, SettingsData settings)
     {
-        switch(uniqueID)
+        switch (uniqueID)
         {
             default:
                 break;
@@ -21,7 +21,7 @@ static public class SettingsBinder
     }
     public static void SetString(SettingUID uniqueID, string newValue, SettingsData settings)
     {
-        switch(uniqueID)
+        switch (uniqueID)
         {
             default:
                 break;
@@ -30,7 +30,7 @@ static public class SettingsBinder
     }
     public static bool GetBoolean(SettingUID uniqueID, SettingsData settings)
     {
-        switch(uniqueID)
+        switch (uniqueID)
         {
             case SettingUID.Setting_2_Camera_Invert_YAxis:
                 return settings.Camera.Invert_YAxis;
@@ -45,7 +45,7 @@ static public class SettingsBinder
     }
     public static void SetBoolean(SettingUID uniqueID, bool newValue, SettingsData settings)
     {
-        switch(uniqueID)
+        switch (uniqueID)
         {
             case SettingUID.Setting_2_Camera_Invert_YAxis:
                 settings.Camera.Invert_YAxis = newValue;
@@ -63,7 +63,7 @@ static public class SettingsBinder
     }
     public static int GetInteger(SettingUID uniqueID, SettingsData settings)
     {
-        switch(uniqueID)
+        switch (uniqueID)
         {
             default:
                 break;
@@ -72,7 +72,7 @@ static public class SettingsBinder
     }
     public static void SetInteger(SettingUID uniqueID, int newValue, SettingsData settings)
     {
-        switch(uniqueID)
+        switch (uniqueID)
         {
             default:
                 break;
@@ -81,7 +81,7 @@ static public class SettingsBinder
     }
     public static float GetFloat(SettingUID uniqueID, SettingsData settings)
     {
-        switch(uniqueID)
+        switch (uniqueID)
         {
             case SettingUID.Setting_3_Camera_Sensitivity_X:
                 return settings.Camera.Sensitivity_X;
@@ -96,7 +96,7 @@ static public class SettingsBinder
     }
     public static void SetFloat(SettingUID uniqueID, float newValue, SettingsData settings)
     {
-        switch(uniqueID)
+        switch (uniqueID)
         {
             case SettingUID.Setting_3_Camera_Sensitivity_X:
                 settings.Camera.Sensitivity_X = newValue;
@@ -113,7 +113,7 @@ static public class SettingsBinder
     }
     public static GraphicsQualityAndResolution GetGraphicsQualityAndResolution(SettingUID uniqueID, SettingsData settings)
     {
-        switch(uniqueID)
+        switch (uniqueID)
         {
             case SettingUID.Setting_1_Graphics_QualityAndResolution:
                 return settings.Graphics.QualityAndResolution;
@@ -125,7 +125,7 @@ static public class SettingsBinder
     }
     public static void SetGraphicsQualityAndResolution(SettingUID uniqueID, GraphicsQualityAndResolution newValue, SettingsData settings)
     {
-        switch(uniqueID)
+        switch (uniqueID)
         {
             case SettingUID.Setting_1_Graphics_QualityAndResolution:
                 settings.Graphics.QualityAndResolution.UpdateFrom(newValue);

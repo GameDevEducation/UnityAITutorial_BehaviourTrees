@@ -1,10 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class BTNode_Sequence : BTNodeBase
 {
-   protected override bool ContinueEvaluatingIfChildFailed()
+    protected override bool ContinueEvaluatingIfChildFailed()
     {
         return false;
     }

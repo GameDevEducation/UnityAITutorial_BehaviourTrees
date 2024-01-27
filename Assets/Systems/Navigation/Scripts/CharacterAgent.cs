@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -73,7 +72,7 @@ public class CharacterAgent : CharacterBase
         // return control the agent
         Agent.updatePosition = true;
         Agent.updateRotation = true;
-        Agent.updateUpAxis = true;    
+        Agent.updateUpAxis = true;
     }
 
     public Vector3 PickLocationInRange(float range)

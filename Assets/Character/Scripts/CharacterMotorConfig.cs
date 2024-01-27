@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Cinemachine;
 
 [CreateAssetMenu(fileName = "Character Motor Config", menuName = "Injaia/Character/Motor Config", order = 1)]
 public class CharacterMotorConfig : ScriptableObject

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Goal_Chase : Goal_Base
@@ -53,7 +51,7 @@ public class Goal_Chase : Goal_Base
     public override void OnGoalDeactivated()
     {
         base.OnGoalDeactivated();
-        
+
         CurrentTarget = null;
     }
 
@@ -69,7 +67,7 @@ public class Goal_Chase : Goal_Base
             return false;
 
         // check if we have anything we are aware of
-        foreach(var candidate in Sensors.ActiveTargets.Values)
+        foreach (var candidate in Sensors.ActiveTargets.Values)
         {
             if (candidate.Awareness >= MinAwarenessToChase)
                 return true;

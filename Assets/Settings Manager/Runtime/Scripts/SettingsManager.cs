@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.IO;
 using UnityEngine;
-using System.IO;
 
 public class SettingsManager : MonoBehaviour
 {
@@ -13,7 +11,7 @@ public class SettingsManager : MonoBehaviour
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
-        
+
         Instance = this;
 
         LoadOrCreateSettings();
@@ -22,13 +20,13 @@ public class SettingsManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     string SettingsFilePath
@@ -48,7 +46,7 @@ public class SettingsManager : MonoBehaviour
         {
             // load the JSON content
             string settingsJSON = File.ReadAllText(SettingsFilePath);
-            
+
             // parse the data into the settings
             JsonUtility.FromJsonOverwrite(settingsJSON, Settings);
         }

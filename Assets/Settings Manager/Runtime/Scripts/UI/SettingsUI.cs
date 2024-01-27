@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -64,7 +63,7 @@ public class SettingsHierarchyData
                     string category = Categories[categoryIndex];
                     _Hierarchy[category] = new List<BaseSettingsUIElement>();
 
-                    foreach(var element in ElementLists[categoryIndex].Elements)
+                    foreach (var element in ElementLists[categoryIndex].Elements)
                     {
                         _Hierarchy[category].Add(element);
                     }
@@ -81,7 +80,7 @@ public class SettingsUI : MonoBehaviour
 #pragma warning disable 0649
     [SerializeField] private GameObject CategoryContainer;
     [SerializeField] private GameObject SettingsElementsContainer;
-    [SerializeField] [HideInInspector] private SettingsHierarchyData SettingsHierarchy;
+    [SerializeField][HideInInspector] private SettingsHierarchyData SettingsHierarchy;
     [SerializeField] private string DefaultCategory;
 
     private SettingsUI_Category[] CategoryElements;
@@ -110,7 +109,7 @@ public class SettingsUI : MonoBehaviour
     void Start()
     {
         CategoryElements = CategoryContainer.GetComponentsInChildren<SettingsUI_Category>();
-        
+
         ActivateCategory(DefaultCategory);
     }
 
@@ -122,13 +121,13 @@ public class SettingsUI : MonoBehaviour
             {
                 settingsElement.PopulateInitialValue();
             }
-        }        
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void Input_SaveRequested()
@@ -141,9 +140,9 @@ public class SettingsUI : MonoBehaviour
     public void Input_ResetRequested()
     {
         // reset to the original value
-        foreach(string category in SettingsHierarchy.Hierarchy.Keys)
+        foreach (string category in SettingsHierarchy.Hierarchy.Keys)
         {
-            foreach(var settingsElement in SettingsHierarchy.Hierarchy[category])
+            foreach (var settingsElement in SettingsHierarchy.Hierarchy[category])
             {
                 settingsElement.ResetToOriginalValue();
             }
@@ -162,15 +161,15 @@ public class SettingsUI : MonoBehaviour
     public void ActivateCategory(string categoryName)
     {
         // update the category elements
-        foreach(SettingsUI_Category category in CategoryElements)
+        foreach (SettingsUI_Category category in CategoryElements)
         {
             category.SetCategoryIsShown(category.Name == categoryName);
         }
 
         // update which settings are visible
-        foreach(string category in SettingsHierarchy.Hierarchy.Keys)
+        foreach (string category in SettingsHierarchy.Hierarchy.Keys)
         {
-            foreach(var settingsElement in SettingsHierarchy.Hierarchy[category])
+            foreach (var settingsElement in SettingsHierarchy.Hierarchy[category])
             {
                 settingsElement.gameObject.SetActive(category == categoryName);
 
@@ -235,7 +234,7 @@ public class SettingsUI : MonoBehaviour
         // clear any existing data in preparation for the gen cycle
         GenerateUI_Reset();
 
-        EditorSceneManager.MarkSceneDirty(gameObject.scene);        
+        EditorSceneManager.MarkSceneDirty(gameObject.scene);
     }
 
     void GenerateUI_Reset()
@@ -244,19 +243,19 @@ public class SettingsUI : MonoBehaviour
 
         SettingUIDs = new List<string>();
 
-        Getters_Boolean                         = new List<string>();
-        Getters_Integer                         = new List<string>();
-        Getters_Float                           = new List<string>();
-        Getters_String                          = new List<string>();
-        Getters_GraphicsQualityAndResolution    = new List<string>();
+        Getters_Boolean = new List<string>();
+        Getters_Integer = new List<string>();
+        Getters_Float = new List<string>();
+        Getters_String = new List<string>();
+        Getters_GraphicsQualityAndResolution = new List<string>();
 
-        Setters_Boolean                         = new List<string>();
-        Setters_Integer                         = new List<string>();
-        Setters_Float                           = new List<string>();
-        Setters_String                          = new List<string>();
-        Setters_GraphicsQualityAndResolution    = new List<string>();
+        Setters_Boolean = new List<string>();
+        Setters_Integer = new List<string>();
+        Setters_Float = new List<string>();
+        Setters_String = new List<string>();
+        Setters_GraphicsQualityAndResolution = new List<string>();
 
-        SettingsHierarchy = new SettingsHierarchyData();   
+        SettingsHierarchy = new SettingsHierarchyData();
 
         // build the list of objects to clear
         List<GameObject> elementsToDestroy = new List<GameObject>();
@@ -266,7 +265,7 @@ public class SettingsUI : MonoBehaviour
             elementsToDestroy.Add(SettingsElementsContainer.transform.GetChild(index).gameObject);
 
         // destroy the objects
-        foreach(var element in elementsToDestroy)
+        foreach (var element in elementsToDestroy)
         {
             Editor.DestroyImmediate(element);
         }
@@ -296,7 +295,7 @@ public class SettingsUI : MonoBehaviour
                 continue;
 
             GenerateUI_BindVariable(parentName, candidateProperty.Name, settingAttribute);
-        }        
+        }
     }
 
     void GenerateUI_BindVariable(string parentName, string variableName, ConfigurableSetting settingAttribute)
@@ -406,7 +405,7 @@ public class SettingsUI : MonoBehaviour
             if (settingAttribute.ForceRefreshOnChange)
                 setterCode += "                SettingsUI.Instance.ForceRefreshCategory(\"" + settingAttribute.Category + "\");" + System.Environment.NewLine;
 
-            setterCode += "                return;"+ System.Environment.NewLine;
+            setterCode += "                return;" + System.Environment.NewLine;
 
             Setters_GraphicsQualityAndResolution.Add(setterCode);
         }
@@ -421,7 +420,7 @@ public class SettingsUI : MonoBehaviour
             if (settingAttribute.ForceRefreshOnChange)
                 setterCode += "                SettingsUI.Instance.ForceRefreshCategory(\"" + settingAttribute.Category + "\");" + System.Environment.NewLine;
 
-            setterCode += "                return;"+ System.Environment.NewLine;
+            setterCode += "                return;" + System.Environment.NewLine;
 
             if (settingAttribute is IntegerSetting)
                 Setters_Integer.Add(setterCode);
@@ -442,7 +441,7 @@ public class SettingsUI : MonoBehaviour
         code += "{" + System.Environment.NewLine;
         code += "    Unknown," + System.Environment.NewLine;
 
-        foreach(var uid in SettingUIDs) { code += "    " + uid + "," + System.Environment.NewLine;}
+        foreach (var uid in SettingUIDs) { code += "    " + uid + "," + System.Environment.NewLine; }
 
         code += "    NumSettings" + System.Environment.NewLine;
         code += "}" + System.Environment.NewLine;
@@ -479,8 +478,8 @@ public class SettingsUI : MonoBehaviour
         code += "    {" + System.Environment.NewLine;
         code += "        switch(uniqueID)" + System.Environment.NewLine;
         code += "        {" + System.Environment.NewLine;
-        
-        foreach(var getter in Getters_Boolean) { code += getter + System.Environment.NewLine;}
+
+        foreach (var getter in Getters_Boolean) { code += getter + System.Environment.NewLine; }
 
         code += "            default:" + System.Environment.NewLine;
         code += "                break;" + System.Environment.NewLine;
@@ -493,7 +492,7 @@ public class SettingsUI : MonoBehaviour
         code += "        switch(uniqueID)" + System.Environment.NewLine;
         code += "        {" + System.Environment.NewLine;
 
-        foreach(var setter in Setters_Boolean) { code += setter + System.Environment.NewLine;}
+        foreach (var setter in Setters_Boolean) { code += setter + System.Environment.NewLine; }
 
         code += "            default:" + System.Environment.NewLine;
         code += "                break;" + System.Environment.NewLine;
@@ -506,7 +505,7 @@ public class SettingsUI : MonoBehaviour
         code += "        switch(uniqueID)" + System.Environment.NewLine;
         code += "        {" + System.Environment.NewLine;
 
-        foreach(var getter in Getters_Integer) { code += getter + System.Environment.NewLine;}
+        foreach (var getter in Getters_Integer) { code += getter + System.Environment.NewLine; }
 
         code += "            default:" + System.Environment.NewLine;
         code += "                break;" + System.Environment.NewLine;
@@ -519,7 +518,7 @@ public class SettingsUI : MonoBehaviour
         code += "        switch(uniqueID)" + System.Environment.NewLine;
         code += "        {" + System.Environment.NewLine;
 
-        foreach(var setter in Setters_Integer) { code += setter + System.Environment.NewLine;}
+        foreach (var setter in Setters_Integer) { code += setter + System.Environment.NewLine; }
 
         code += "            default:" + System.Environment.NewLine;
         code += "                break;" + System.Environment.NewLine;
@@ -532,7 +531,7 @@ public class SettingsUI : MonoBehaviour
         code += "        switch(uniqueID)" + System.Environment.NewLine;
         code += "        {" + System.Environment.NewLine;
 
-        foreach(var getter in Getters_Float) { code += getter + System.Environment.NewLine;}
+        foreach (var getter in Getters_Float) { code += getter + System.Environment.NewLine; }
 
         code += "            default:" + System.Environment.NewLine;
         code += "                break;" + System.Environment.NewLine;
@@ -545,7 +544,7 @@ public class SettingsUI : MonoBehaviour
         code += "        switch(uniqueID)" + System.Environment.NewLine;
         code += "        {" + System.Environment.NewLine;
 
-        foreach(var setter in Setters_Float) { code += setter + System.Environment.NewLine;}
+        foreach (var setter in Setters_Float) { code += setter + System.Environment.NewLine; }
 
         code += "            default:" + System.Environment.NewLine;
         code += "                break;" + System.Environment.NewLine;
@@ -558,7 +557,7 @@ public class SettingsUI : MonoBehaviour
         code += "        switch(uniqueID)" + System.Environment.NewLine;
         code += "        {" + System.Environment.NewLine;
 
-        foreach(var getter in Getters_GraphicsQualityAndResolution) { code += getter + System.Environment.NewLine;}
+        foreach (var getter in Getters_GraphicsQualityAndResolution) { code += getter + System.Environment.NewLine; }
 
         code += "            default:" + System.Environment.NewLine;
         code += "                break;" + System.Environment.NewLine;
@@ -571,7 +570,7 @@ public class SettingsUI : MonoBehaviour
         code += "        switch(uniqueID)" + System.Environment.NewLine;
         code += "        {" + System.Environment.NewLine;
 
-        foreach(var setter in Setters_GraphicsQualityAndResolution) { code += setter + System.Environment.NewLine;}
+        foreach (var setter in Setters_GraphicsQualityAndResolution) { code += setter + System.Environment.NewLine; }
 
         code += "            default:" + System.Environment.NewLine;
         code += "                break;" + System.Environment.NewLine;

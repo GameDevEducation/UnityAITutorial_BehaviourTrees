@@ -5,11 +5,11 @@ Sourced from: https://github.com/Deadcows/MyBox
 */
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reflection;
+using UnityEngine;
 
 // From: https://github.com/Deadcows/MyBox/blob/master/Attributes/ConditionalFieldAttribute.cs
 #region Conditional Field Attribute
@@ -43,7 +43,7 @@ namespace Template.Internal
     public class ConditionalFieldAttributeDrawer : PropertyDrawer
     {
         private ConditionalFieldAttribute _attribute;
-        
+
         private bool _customDrawersCached;
         private static IEnumerable<Type> _typesCache;
         private bool _multipleAttributes;
@@ -59,7 +59,7 @@ namespace Template.Internal
         /// <summary>
         /// If conditional is part of type in collection, we need to link properties as in collection
         /// </summary>
-        private readonly Dictionary<SerializedProperty, SerializedProperty> _conditionalToTarget = 
+        private readonly Dictionary<SerializedProperty, SerializedProperty> _conditionalToTarget =
             new Dictionary<SerializedProperty, SerializedProperty>();
         private bool _toShow = true;
 
@@ -68,11 +68,11 @@ namespace Template.Internal
         {
             if (_attribute == null) _attribute = attribute as ConditionalFieldAttribute;
             if (_attribute == null) return;
-            
-            if (!_conditionalToTarget.ContainsKey(property)) 
+
+            if (!_conditionalToTarget.ContainsKey(property))
                 _conditionalToTarget.Add(property, ConditionalFieldUtility.FindRelativeProperty(property, _attribute.FieldToCheck));
-            
-            
+
+
             if (_customDrawersCached) return;
             if (_typesCache == null)
             {
@@ -81,7 +81,7 @@ namespace Template.Internal
             }
 
             if (fieldInfo == null) return;
-            
+
             if (fieldInfo.GetCustomAttributes(typeof(PropertyAttribute), false).Count() > 1)
             {
                 _multipleAttributes = true;
@@ -164,7 +164,7 @@ namespace Template.Internal
             //Get the second attribute flag
             try
             {
-                _genericAttribute = (PropertyAttribute) fieldInfo.GetCustomAttributes(typeof(PropertyAttribute), false)[1];
+                _genericAttribute = (PropertyAttribute)fieldInfo.GetCustomAttributes(typeof(PropertyAttribute), false)[1];
 
                 if (_genericAttribute is ContextMenuItemAttribute/* ||
                     _genericAttribute is SeparatorAttribute | _genericAttribute is AutoPropertyAttribute*/)
@@ -185,7 +185,7 @@ namespace Template.Internal
             try
             {
                 _genericDrawerType = _typesCache.First(x =>
-                    (Type) CustomAttributeData.GetCustomAttributes(x).First().ConstructorArguments.First().Value == _genericAttribute.GetType());
+                    (Type)CustomAttributeData.GetCustomAttributes(x).First().ConstructorArguments.First().Value == _genericAttribute.GetType());
             }
             catch (Exception e)
             {
@@ -196,7 +196,7 @@ namespace Template.Internal
             //Create instances of each (including the arguments)
             try
             {
-                _genericDrawerInstance = (PropertyDrawer) Activator.CreateInstance(_genericDrawerType);
+                _genericDrawerInstance = (PropertyDrawer)Activator.CreateInstance(_genericDrawerType);
 
                 List<Attribute> allAttributes = fieldInfo.GetCustomAttributes().ToList();
                 int attributeIndex = -1;
@@ -217,7 +217,7 @@ namespace Template.Internal
                 {
                     if (singleParam.Value.GetType() == typeof(ReadOnlyCollection<CustomAttributeTypedArgument>))
                     {
-                        foreach (CustomAttributeTypedArgument unpackedSingleParam in (ReadOnlyCollection<CustomAttributeTypedArgument>) singleParam
+                        foreach (CustomAttributeTypedArgument unpackedSingleParam in (ReadOnlyCollection<CustomAttributeTypedArgument>)singleParam
                             .Value)
                         {
                             unpackedParams.Add(unpackedSingleParam);
@@ -233,11 +233,11 @@ namespace Template.Internal
 
                 if (attributeParamsObj.Any())
                 {
-                    _genericAttribute = (PropertyAttribute) Activator.CreateInstance(_genericAttribute.GetType(), attributeParamsObj);
+                    _genericAttribute = (PropertyAttribute)Activator.CreateInstance(_genericAttribute.GetType(), attributeParamsObj);
                 }
                 else
                 {
-                    _genericAttribute = (PropertyAttribute) Activator.CreateInstance(_genericAttribute.GetType());
+                    _genericAttribute = (PropertyAttribute)Activator.CreateInstance(_genericAttribute.GetType());
                 }
             }
             catch (Exception e)
@@ -272,7 +272,7 @@ namespace Template.Internal
             try
             {
                 _genericTypeDrawerType = _typesCache.First(x =>
-                    (Type) CustomAttributeData.GetCustomAttributes(x).First().ConstructorArguments.First().Value == _genericType);
+                    (Type)CustomAttributeData.GetCustomAttributes(x).First().ConstructorArguments.First().Value == _genericType);
             }
             catch (Exception)
             {
@@ -284,7 +284,7 @@ namespace Template.Internal
             //Create instances of each (including the arguments)
             try
             {
-                _genericTypeDrawerInstance = (PropertyDrawer) Activator.CreateInstance(_genericTypeDrawerType);
+                _genericTypeDrawerInstance = (PropertyDrawer)Activator.CreateInstance(_genericTypeDrawerType);
             }
             catch (Exception e)
             {
@@ -440,7 +440,7 @@ namespace Template.Internal
 
         #endregion
 
-        
+
         #region Behaviour Property Is Visible
 
         public static bool BehaviourPropertyIsVisible(MonoBehaviour behaviour, string propertyName, ConditionalFieldAttribute appliedAttribute)

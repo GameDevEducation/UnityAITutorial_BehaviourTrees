@@ -1,15 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 
 #if UNITY_EDITOR
-using UnityEditor;
 using UnityEditor.Events;
 #endif // UNITY_EDITOR
 
 [System.Serializable]
-public class ActivateCategory : UnityEvent<string> {}
+public class ActivateCategory : UnityEvent<string> { }
 
 public class SettingsUI_Category : MonoBehaviour
 {
@@ -28,17 +25,17 @@ public class SettingsUI_Category : MonoBehaviour
             return CategoryName;
         }
     }
-    
+
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void SetCategoryIsShown(bool isShown)

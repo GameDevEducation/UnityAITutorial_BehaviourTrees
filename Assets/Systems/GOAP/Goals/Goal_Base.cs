@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public interface IGoal
@@ -27,7 +25,7 @@ public class Goal_Base : MonoBehaviour, IGoal
 
     void Start()
     {
-        DebugUI = FindObjectOfType<GOAPUI>();
+        DebugUI = FindFirstObjectByType<GOAPUI>();
     }
 
     void Update()

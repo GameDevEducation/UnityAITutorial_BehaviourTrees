@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GOAPPlanner : MonoBehaviour
@@ -22,7 +20,7 @@ public class GOAPPlanner : MonoBehaviour
         Action_Base bestAction = null;
 
         // find the highest priority goal that can be activated
-        foreach(var goal in Goals)
+        foreach (var goal in Goals)
         {
             // first tick the goal
             goal.OnTickGoal();
@@ -37,7 +35,7 @@ public class GOAPPlanner : MonoBehaviour
 
             // find the best cost action
             Action_Base candidateAction = null;
-            foreach(var action in Actions)
+            foreach (var action in Actions)
             {
                 if (!action.GetSupportedGoals().Contains(goal.GetType()))
                     continue;
@@ -64,7 +62,7 @@ public class GOAPPlanner : MonoBehaviour
             if (ActiveGoal != null)
                 ActiveGoal.OnGoalActivated(ActiveAction);
             if (ActiveAction != null)
-                ActiveAction.OnActivated(ActiveGoal);            
+                ActiveAction.OnActivated(ActiveGoal);
         } // no change in goal?
         else if (ActiveGoal == bestGoal)
         {
@@ -72,7 +70,7 @@ public class GOAPPlanner : MonoBehaviour
             if (ActiveAction != bestAction)
             {
                 ActiveAction.OnDeactivated();
-                
+
                 ActiveAction = bestAction;
 
                 ActiveAction.OnActivated(ActiveGoal);
