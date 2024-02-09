@@ -58242,6 +58242,10 @@ PrefabInstance:
       propertyPath: DetectionMask.m_Bits
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 179596591, guid: 152a989ccadbc99409814496cde3f095, type: 3}
+      propertyPath: m_StoppingDistance
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8223693791530248982, guid: 152a989ccadbc99409814496cde3f095, type: 3}
       propertyPath: m_Name
       value: Enemy Character_BehaviourTree

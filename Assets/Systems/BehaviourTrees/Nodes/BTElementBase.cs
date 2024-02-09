@@ -13,5 +13,5 @@ public abstract class BTElementBase
         return debugTextBuilder.ToString();
     }
 
-    protected abstract void GetDebugTextInternal(StringBuilder debugTextBuilder, int indentLevel = 0);
+    public abstract void GetDebugTextInternal(StringBuilder debugTextBuilder, int indentLevel = 0);
 }

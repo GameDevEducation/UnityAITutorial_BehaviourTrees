@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(BehaviourTree))]
 public class BTSetup : MonoBehaviour
 {
-    public class BlackboardKey : BlackboardKeyBase, IEquatable<BlackboardKey>
+    public class BlackboardKey : BlackboardKeyBase, System.IEquatable<BlackboardKey>
     {
         public static readonly BlackboardKey CurrentTarget = new BlackboardKey() { Name = "CurrentTarget" };
 
@@ -24,7 +23,7 @@ public class BTSetup : MonoBehaviour
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Name);
+            return System.HashCode.Combine(Name);
         }
 
         public static bool operator ==(BlackboardKey left, BlackboardKey right)
@@ -49,6 +48,8 @@ public class BTSetup : MonoBehaviour
     protected CharacterAgent Agent;
     protected AwarenessSystem Sensors;
     protected Blackboard<BlackboardKey> LocalMemory;
+
+    protected float YellCooldown = 0f;
 
     void Awake()
     {
@@ -112,7 +113,7 @@ public class BTSetup : MonoBehaviour
             return currentTarget != null;
         });
 
-        chaseRoot.Add<BTNode_Action>("Chase Target",
+        chaseRoot.Add<BTNode_Action>(new BTNode_Action("Chase Target",
             () =>
             {
                 var currentTarget = LocalMemory.GetGeneric<DetectableTarget>(BlackboardKey.CurrentTarget);
@@ -126,10 +127,11 @@ public class BTSetup : MonoBehaviour
                 Agent.MoveTo(currentTarget.transform.position);
 
                 return BehaviourTree.ENodeStatus.InProgress;
-            });
+            }));
 
-        var wanderRoot = BTRoot.Add<BTNode_Sequence>("Wander");
-        wanderRoot.Add<BTNode_Action>("Perform Wander",
+        var wanderRoot = BTRoot.Add<BTNode_Sequence>("Wander").Add<BTNode_Parallel>("Wander Logic") as BTNode_Parallel;
+
+        wanderRoot.SetPrimary(new BTNode_Action("Perform Wander",
             () =>
             {
                 Vector3 location = Agent.PickLocationInRange(Wander_Range);
@@ -141,6 +143,25 @@ public class BTSetup : MonoBehaviour
             () =>
             {
                 return Agent.AtDestination ? BehaviourTree.ENodeStatus.Succeeded : BehaviourTree.ENodeStatus.InProgress;
-            });
+            }));
+
+        //wanderRoot.SetSecondary(new BTNode_ReturnResult(BehaviourTree.ENodeStatus.InProgress));
+
+        wanderRoot.SetSecondary(new BTNode_Action("Random Yell",
+            () =>
+            {
+                return BehaviourTree.ENodeStatus.InProgress;
+            },
+            () =>
+            {
+                YellCooldown -= Time.deltaTime;
+                if (YellCooldown <= 0)
+                {
+                    Debug.Log("I am wandering!");
+                    YellCooldown = Random.Range(1.0f, 3.0f);
+                }
+
+                return BehaviourTree.ENodeStatus.InProgress;
+            }));
     }
 }

@@ -83,13 +83,15 @@ public class BTNodeBase : BTElementBase
             child.Reset();
     }
 
-    public void Tick(float deltaTime)
+    public bool Tick(float deltaTime)
     {
         bool tickedAnyNodes = OnTick(deltaTime);
 
         // no actions were performed - reset and start over
         if (!tickedAnyNodes)
             Reset();
+
+        return tickedAnyNodes;
     }
 
     protected virtual void OnEnter()
@@ -100,13 +102,13 @@ public class BTNodeBase : BTElementBase
             LastStatus = Children.Count > 0 ? BehaviourTree.ENodeStatus.InProgress : BehaviourTree.ENodeStatus.Succeeded;
     }
 
-    void TickServices(float deltaTime)
+    public void TickServices(float deltaTime)
     {
         foreach (var service in Services)
             service.OnTick(deltaTime);
     }
 
-    bool EvaluateDecorators()
+    public bool EvaluateDecorators()
     {
         bool canRun = true;
 
@@ -189,7 +191,7 @@ public class BTNodeBase : BTElementBase
             // if the child is in progress then early out after ticking
             if (child.LastStatus == BehaviourTree.ENodeStatus.InProgress)
             {
-                tickedAnyNodes |= child.OnTick(deltaTime);
+                tickedAnyNodes |= child.Tick(deltaTime);
                 return tickedAnyNodes;
             }
 
@@ -197,7 +199,7 @@ public class BTNodeBase : BTElementBase
             if (child.LastStatus != BehaviourTree.ENodeStatus.Unknown)
                 continue;
 
-            tickedAnyNodes |= child.OnTick(deltaTime);
+            tickedAnyNodes |= child.Tick(deltaTime);
 
             // inherit the child's status by default
             LastStatus = child.LastStatus;
@@ -248,7 +250,7 @@ public class BTNodeBase : BTElementBase
 
     }
 
-    protected override void GetDebugTextInternal(StringBuilder debugTextBuilder, int indentLevel = 0)
+    public override void GetDebugTextInternal(StringBuilder debugTextBuilder, int indentLevel = 0)
     {
         // apply the indent
         for (int index = 0; index < indentLevel; ++index)

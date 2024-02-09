@@ -16,7 +16,7 @@ public class BTServiceBase : BTElementBase
             OnTickFn(deltaTime);
     }
 
-    protected override void GetDebugTextInternal(StringBuilder debugTextBuilder, int indentLevel = 0)
+    public override void GetDebugTextInternal(StringBuilder debugTextBuilder, int indentLevel = 0)
     {
         // apply the indent
         for (int index = 0; index < indentLevel; ++index)
